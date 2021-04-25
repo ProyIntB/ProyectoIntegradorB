@@ -8,10 +8,35 @@ import Vehiculos from './pages/Vehiculos'
 import Remisiones from './pages/Remisiones'
 import Facturas from './pages/Facturas'
 import Historiales from './pages/Historiales'
+import firebase from './firebase'
+import { useState, useEffect } from 'react';
+/*import NavBar from './NavBar'*/
+import Login from './authentication/Login';
+import SignUp from './authentication/SignUp';
+
 function App() {
+
+  const [user, setUser] = useState('');
+  const [toggleForm, setToggleForm] = useState(true);
+  const formMode = () => {
+    setToggleForm(!toggleForm);
+  }
+
+  const userState = () => {
+    const data = localStorage.getItem('user');
+    const us = data !== null ? JSON.parse(data) : null;
+    setUser(us);
+  }
+
+  useEffect(() => {
+    userState();
+  }, []);
+
   return (
     <>
-    <Router>
+      {user !== null ? (
+        <>
+        <Router>
       <Navbar/>
         <Switch>
           <Route path="/" exact component={Home}/>
@@ -22,7 +47,16 @@ function App() {
           <Route path="/Historiales" component={Historiales}/>
         </Switch>
     </Router>
+        </>
+      ) : (
+        <>
+        {toggleForm ? (<Login loggedIn={(user) => setUser(user)} toggle={() => formMode()} />) 
+        : (<SignUp toggle={() => formMode()} />)}
+        </>
+      )}
     </>
+
+   
   );
 }
 

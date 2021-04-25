@@ -6,14 +6,35 @@ import { SidebarData } from './SidebarData'
 import './Navbar.css'
 import { IconContext } from 'react-icons'
 
-const Navbar = () => {
+/*intento*/
+import {AppBar, Toolbar, IconButton, Typography, Menu, MenuItem, makeStyles} from '@material-ui/core';
+import {AccountCircle} from '@material-ui/icons';
+
+const Navbar = (props) => {
 
     const [sidebar, setSidebar] = useState(false);
 
     const showSidebar= () => setSidebar(!sidebar)
+
+/*modificacion*/
+    const classes = useStyles();
+    const [auth, setAuth] = React.useState(true);
+    const [anchorEl, setAnchorEl] = React.useState(null);
+    const open  = Boolean(anchorEl);
+
+    const handleClose = () =>{
+        localStorage.removeItem('user');
+        props.setUserState();
+        setAnchorEl(null);
+    }
+
+    const handleMenu = (event) => {
+        setAnchorEl(event.currentTarget);
+    };
+
     return (
         <>
-        <IconContext.Provider value={{color: 'black'}}>
+        <IconContext.Provider value={{color: 'white'}}>
             <div className="navbar">
               <Link to="#" className="menu-bars">
                 <FaIcons.FaBars onClick={showSidebar}/>
@@ -21,6 +42,37 @@ const Navbar = () => {
                 <div>
                     
                 </div>
+                {auth && (
+                        <div>
+                            <IconButton 
+                              aria-label="account of current user"
+                              aria-controls="menu-appbar"
+                              aria-haspopup="true"
+                              onClick={handleMenu}
+                              color="inherit" 
+                            >
+                                <AccountCircle/>
+                            </IconButton>
+                            <Menu
+                              id="menu-appbar"
+                              anchorEl={anchorEl}
+                              anchorOrigin={{
+                                  vertical: 'top',
+                                  horizontal: 'right',
+                              }}
+                              keepMounted
+                              transformOrigin={{
+                                  vertical: 'top',
+                                  horizontal: 'right',
+                              }}
+                              open={open}
+                              onClose={handleClose}
+                              >
+                                  <MenuItem>Profile</MenuItem>
+                                  <MenuItem onClick={handleClose}>Logout</MenuItem>
+                              </Menu>
+                        </div>
+                    )}
             </div>
             <nav className={ sidebar ? 'nav-menu active' : 'nav-menu'}>
             <ul className='nav-menu-items' onClick={showSidebar}>
@@ -45,8 +97,25 @@ const Navbar = () => {
             </ul>  
             </nav>
             </IconContext.Provider>
+
+        
         </>
+
+
+
     )
 }
+
+const useStyles = makeStyles((theme) => ({
+    root: {
+        flexGrow: 1
+    },
+    menubackgroud: {
+        background: 'linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%',
+    },
+    title: {
+        flexGrow: 1
+    }
+}));
 
 export default Navbar
